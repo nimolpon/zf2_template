@@ -49,5 +49,15 @@ class Module implements AutoloaderProviderInterface
         $serviceManager = $e->getApplication()->getServiceManager();        
         $dbAdapter = $serviceManager->get('Zend\Db\Adapter\Adapter');        
         GlobalAdapterFeature::setStaticAdapter($dbAdapter);
+        
+        // change layout to layout login
+       	$eventManager->getSharedManager()->attach('Zend\Mvc\Controller\AbstractActionController', 'dispatch', function($e) {
+        	$controller      = $e->getTarget();
+        	$controllerClass = get_class($controller);
+        	$moduleNamespace = substr($controllerClass, 0, strpos($controllerClass, '\\'));
+        	if ('Admin' === $moduleNamespace ) {
+        		$controller->layout('layout/admin_layout');
+        	}
+        }, 100);
     }
 }
